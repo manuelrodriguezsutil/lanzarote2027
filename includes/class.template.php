@@ -16,11 +16,11 @@ class Template
             <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
             <title>{$titulo}</title>
             <meta name=\"description\" content=\"{$descripcion}\">
-            <link rel=\"stylesheet\" href=\"assets/vendor/bootstrap6/css/bootstrap.min.css\">
-            <script type=\"importmap\">{\"imports\": {\"bootstrap\": \"./assets/vendor/bootstrap6/js/bootstrap.bundle.min.js\"}}</script>
-            <link rel=\"stylesheet\" href=\"assets/css/base.css\">
-            <link rel=\"stylesheet\" href=\"assets/css/style.css\">
-            <link rel=\"stylesheet\" href=\"assets/css/print.css\" media=\"print\">
+            <link rel=\"stylesheet\" href=\"/assets/vendor/bootstrap6/css/bootstrap.min.css\">
+            <script type=\"importmap\">{\"imports\": {\"bootstrap\": \"/assets/vendor/bootstrap6/js/bootstrap.bundle.min.js\"}}</script>
+            <link rel=\"stylesheet\" href=\"/assets/css/base.css\">
+            <link rel=\"stylesheet\" href=\"/assets/css/style.css\">
+            <link rel=\"stylesheet\" href=\"/assets/css/print.css\" media=\"print\">
         </head>
         <body>
         " . self::navegacion();
@@ -34,10 +34,10 @@ class Template
         <header class=\"site-header no-print\">
 
         <div class=\"wrap head-in\">
-            <a class=\"wordmark\" href=\"index.php\">Lanzarote</a>
+            <a class=\"wordmark\" href=\"/\">Lanzarote</a>
 
             <nav class=\"head-nav\" aria-label=\"Main\">
-                <a class=\"head-link is-active\" href=\"index.html#work\">Work</a>
+                <a class=\"head-link is-active\" href=\"/usuarios/listado/0\">Usuarios</a>
                 <a class=\"head-link is-active\" href=\"index.html#writing\">Writing</a>
                 <a class=\"head-link\" href=\"project.html\">Case study</a>
                 <a class=\"head-link\" href=\"index.html#contact\">Contact</a>
@@ -71,7 +71,7 @@ class Template
             </div>
         </footer>
 
-        <script type=\"module\" src=\"assets/js/main.js\"></script>
+        <script type=\"module\" src=\"/assets/js/main.js\"></script>
         </body>
         </html>
         ";
