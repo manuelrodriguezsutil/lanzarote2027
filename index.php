@@ -5,10 +5,15 @@ echo Template::header('Lanzarote');
 
 switch ($_GET['seccion']) {
     case 'usuarios':
+        $url_form = '/usuarios/alta';
+
         switch ($_GET['oper']) {
             case 'modi':
                 $id = $_GET["pagina"];
+                $url_form = '/usuarios/modi/' . $id;
             case 'alta':
+                define("OPERACION", $_GET['oper'] == 'modi' ? 'Modificación' : 'Alta');
+
                 $boton_alta = "<input type=\"submit\" class=\"theme-primary btn-solid btn-styled\" value=\"Alta de usuario\" />";
 
                 $errores = false;
@@ -76,78 +81,106 @@ switch ($_GET['seccion']) {
 
                         $disabled = " disabled=\"disabled\" ";
 
-                        $query = new Query("
-                                INSERT INTO usuarios
-                                (
-                                     nombre    
-                                    ,apellido1 
-                                    ,apellido2 
-                                    ,fecha_nacimiento 
-                                    ,email 
+                        switch ($_GET['oper']) {
+                            case 'alta':
+                                $query = new Query("
+                                        INSERT INTO usuarios
+                                        (
+                                            nombre    
+                                            ,apellido1 
+                                            ,apellido2 
+                                            ,fecha_nacimiento 
+                                            ,email 
 
-                                    ,fecha_alta   
-                                    ,ip_alta      
-                                    ,fecha_modi   
-                                    ,ip_modi      
-                                )
-                                VALUES
-                                (
-                                     '" . $_POST['nombre']           . "'
-                                    ,'" . $_POST['apellido1']        . "'
-                                    ,'" . $_POST['apellido2']        . "'
-                                    ,'" . $_POST['fecha_nacimiento'] . "'
-                                    ,'" . $_POST['email']            . "'
+                                            ,fecha_alta   
+                                            ,ip_alta      
+                                            ,fecha_modi   
+                                            ,ip_modi      
+                                        )
+                                        VALUES
+                                        (
+                                            '" . $_POST['nombre']           . "'
+                                            ,'" . $_POST['apellido1']        . "'
+                                            ,'" . $_POST['apellido2']        . "'
+                                            ,'" . $_POST['fecha_nacimiento'] . "'
+                                            ,'" . $_POST['email']            . "'
 
-                                    ,now()
-                                    ,'" . $_SERVER['SERVER_ADDR']    . "'
-                                    ,now()
-                                    ,'" . $_SERVER['SERVER_ADDR']    . "'
+
+                                            ,now()
+                                            ,'" . $_SERVER['SERVER_ADDR']    . "'
+                                            ,now()
+                                            ,'" . $_SERVER['SERVER_ADDR']    . "'
+                                            
+                                        )
                                     
-                                )
-                            
-                            ");
+                                    ");
+                                break;
+                            case 'modi':
+                                $query = new Query("
+                                        UPDATE usuarios
+
+                                        SET
+                                             nombre             = '" . $_POST['nombre']           . "'
+                                            ,apellido1          = '" . $_POST['apellido1']        . "'
+                                            ,apellido2          = '" . $_POST['apellido2']        . "'
+                                            ,fecha_nacimiento   = '" . $_POST['fecha_nacimiento'] . "'
+                                            ,email              = '" . $_POST['email']            . "'
+
+                                            ,fecha_modi         = now()
+                                            ,ip_modi            = '" . $_SERVER['SERVER_ADDR']    . "'
+
+                                        WHERE id = '{$id}'
+                                    
+                                    ");
+                                break;
+                        }
                     }
                 }
 
                 echo "
-                        <a href=\"/usuarios/listado/0\" class=\"btn-solid theme-info mb-5\">Volver <i class=\"bi bi-arrow-return-left\"></i></a>
-                        <h1>Alta de usuarios</h1>
-                        {$mensajes_errores}
-                        {$mensaje_exito}
-                        <form action=\"/usuarios/alta\" method=\"POST\">
+                <div class=\"container\" style=\"padding: 50px;\">
+                    <a href=\"/usuarios/listado/0\" class=\"btn-solid theme-info mb-5\">Volver <i class=\"bi bi-arrow-return-left\"></i></a>
 
-                            <input type=\"hidden\" name=\"paso\" value=\"1\" />
+                    <h1>" . OPERACION . " de usuarios</h1>
 
-                            <div class=\"form-field mb-4 {$_error_nombre}\">
-                                <label for=\"nombreID\" class=\"form-label\">Nombre</label>
-                                <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$_POST['nombre']}\" placeholder=\"Introduce tu nombre\">
-                            </div>
+                    {$mensajes_errores}
+                    {$mensaje_exito}
 
-                            <div class=\"form-field mb-4 {$_error_apellido1}\">
-                                <label for=\"apellido1ID\" class=\"form-label\">Primer apellido</label>
-                                <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$_POST['apellido1']}\" placeholder=\"Introduce tu primer apellido\">
-                            </div>
+                    <form action=\"{$url_form}\" method=\"POST\">
 
-                            <div class=\"form-field mb-4 {$_error_apellido2}\">
-                                <label for=\"apellido2ID\" class=\"form-label\">Segundo apellido</label>
-                                <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$_POST['apellido2']}\" value=\"{$_POST['nombre']}\" placeholder=\"Introduce tu segundo apellido\">
-                            </div>
+                        <input type=\"hidden\" name=\"paso\" value=\"1\" />
 
-                            <div class=\"form-field mb-4 {$_error_fecha_nacimiento}\">
-                                <label for=\"fecha_nacimientoID\" class=\"form-label\">Fecha nacimiento</label>
-                                <input {$disabled} type=\"date\" name=\"fecha_nacimiento\" class=\"form-control\" id=\"fecha_nacimientoID\" value=\"{$_POST['fecha_nacimiento']}\" placeholder=\"nombre@dominio.com\">
-                            </div>
+                        <input type=\"hidden\" name=\"id\" value=\"{$_POST['id']}\" />
 
-                            <div class=\"form-field mb-4 {$_error_email}\">
-                                <label for=\"emailID\" class=\"form-label\">Email</label>
-                                <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$_POST['email']}\" placeholder=\"nombre@dominio.com\">
-                            </div>
+                        <div class=\"form-field mb-4 {$_error_nombre}\">
+                            <label for=\"nombreID\" class=\"form-label\">Nombre</label>
+                            <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$_POST['nombre']}\" placeholder=\"Introduce tu nombre\">
+                        </div>
 
-                            {$boton_alta}
+                        <div class=\"form-field mb-4 {$_error_apellido1}\">
+                            <label for=\"apellido1ID\" class=\"form-label\">Primer apellido</label>
+                            <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$_POST['apellido1']}\" placeholder=\"Introduce tu primer apellido\">
+                        </div>
 
-                        </form>
-                    ";
+                        <div class=\"form-field mb-4 {$_error_apellido2}\">
+                            <label for=\"apellido2ID\" class=\"form-label\">Segundo apellido</label>
+                            <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$_POST['apellido2']}\" value=\"{$_POST['nombre']}\" placeholder=\"Introduce tu segundo apellido\">
+                        </div>
 
+                        <div class=\"form-field mb-4 {$_error_fecha_nacimiento}\">
+                            <label for=\"fecha_nacimientoID\" class=\"form-label\">Fecha nacimiento</label>
+                            <input {$disabled} type=\"date\" name=\"fecha_nacimiento\" class=\"form-control\" id=\"fecha_nacimientoID\" value=\"{$_POST['fecha_nacimiento']}\" placeholder=\"nombre@dominio.com\">
+                        </div>
+
+                        <div class=\"form-field mb-4 {$_error_email}\">
+                            <label for=\"emailID\" class=\"form-label\">Email</label>
+                            <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$_POST['email']}\" placeholder=\"nombre@dominio.com\">
+                        </div>
+
+                        {$boton_alta}
+
+                    </form>
+                </div>";
                 break;
 
             default:
