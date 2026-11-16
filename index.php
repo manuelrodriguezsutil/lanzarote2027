@@ -1,4 +1,3 @@
-
 <?php
 require_once "includes/general.php";
 
@@ -12,7 +11,7 @@ switch ($_GET['seccion']) {
 
         switch ($_GET['oper']) {
 
-            // ELIMINAR USUARIO
+            // ===================== ELIMINAR USUARIO =====================
             case 'del':
 
                 $id = $_GET["pagina"];
@@ -32,14 +31,14 @@ switch ($_GET['seccion']) {
                 exit;
 
 
-                // MODIFICAR USUARIO
+                // ===================== MODIFICAR USUARIO =====================
             case 'modi':
 
                 $id = $_GET["pagina"];
                 $url_form = '/usuarios/modi/' . $id;
 
 
-                // ALTA DE USUARIO
+                // ===================== ALTA DE USUARIO =====================
             case 'alta':
 
                 define("OPERACION", $_GET['oper'] == 'modi' ? 'Modificación' : 'Alta');
@@ -180,7 +179,7 @@ switch ($_GET['seccion']) {
                     $_POST['fecha_nacimiento'] = $registro['fecha_nacimiento'];
                 }
 
-                // FORMULARIO DE USUARIOS
+                // ===================== FORMULARIO DE USUARIOS =====================
                 echo "
                     <div class=\"container\" style=\"padding: 50px;\">
 
@@ -232,7 +231,7 @@ switch ($_GET['seccion']) {
                 break;
 
 
-            // LISTADO DE USUARIOS
+            // ===================== LISTADO DE USUARIOS =====================
             default:
 
                 $query = new Query("
@@ -261,7 +260,7 @@ switch ($_GET['seccion']) {
                     </a>
                 ";
 
-                // TABLA DE USUARIOS
+                // ===================== TABLA DE USUARIOS =====================
                 echo "
                     <table class=\"table\">
                         <thead>
@@ -311,7 +310,7 @@ switch ($_GET['seccion']) {
                     ";
                 }
 
-                // PAGINACIÓN
+                // ===================== PAGINACIÓN =====================
                 $url_anterior = '';
 
                 if ($_GET['pagina'] != "0") {
@@ -348,7 +347,7 @@ switch ($_GET['seccion']) {
         break;
 
 
-    // PÁGINA DE INICIO
+    // ===================== PÁGINA DE INICIO =====================
     default:
 
         echo "
