@@ -21,6 +21,8 @@ class Template
             <link rel=\"stylesheet\" href=\"/assets/css/base.css\">
             <link rel=\"stylesheet\" href=\"/assets/css/style.css\">
             <link rel=\"stylesheet\" href=\"/assets/css/print.css\" media=\"print\">
+            <link rel=\"stylesheet\" href=\"/css/estilos.css\">
+            <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css\">
         </head>
         <body>
         " . self::navegacion();
