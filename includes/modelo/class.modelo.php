@@ -9,8 +9,16 @@ class Modelo
         $this->tabla = $tabla;
     }
 
+    //Escapa un valor para poder meterlo de forma segura dentro de una consulta
+    private function escapar(?string $valor)
+    {
+        return BBDD::getInstancia()->getConexion()->real_escape_string($valor ?? '');
+    }
+
     function recuperar(string $id)
     {
+        $id = $this->escapar($id);
+
         $query = new Query("
             SELECT *
             FROM {$this->tabla}
@@ -20,30 +28,48 @@ class Modelo
         return $query->recuperar();
     }
 
+    //Recibe un array campo => valor y lo inserta en la tabla. Devuelve el id del nuevo registro
+    function insertar(array $registro)
+    {
+        $valores = [];
+        foreach ($registro as $valor)
+            $valores[] = "'" . $this->escapar($valor) . "'";
+
+        $query = new Query("
+            INSERT INTO {$this->tabla}
+            (" . implode(', ', array_keys($registro)) . ")
+            VALUES
+            (" . implode(', ', $valores) . ")
+        ");
+
+        return $query->getLastInsertId();
+    }
+
     function eliminar(string $id)
     {
+        $id = $this->escapar($id);
+
         $query = new Query("
             DELETE FROM {$this->tabla}
-            WHERE id = {$id};
+            WHERE id = '{$id}';
         ");
 
         return $query->total;
     }
 
+    //Recibe un array campo => valor (con el id incluido) y actualiza ese registro
     function modificar(array $registro)
     {
-        $id = $registro['id'];
+        $id = $this->escapar($registro['id']);
+        unset($registro['id']);
+
+        $asignaciones = [];
+        foreach ($registro as $campo => $valor)
+            $asignaciones[] = "{$campo} = '" . $this->escapar($valor) . "'";
 
         $query = new Query("
-            UPDATE {$this->tabla} 
-            SET
-                nombre = '" . $registro['nombre'] . "',
-                apellido1 = '" . $registro['apellido1'] . "',
-                apellido2 = '" . $registro['apellido2'] . "',
-                fecha_nacimiento = '" . $registro['fecha_nacimiento'] . "',
-                email = '" . $registro['email'] . "',
-                fecha_modi = NOW(),
-                ip_modi = '" . $_SERVER['SERVER_ADDR'] . "',
+            UPDATE {$this->tabla}
+            SET " . implode(', ', $asignaciones) . "
             WHERE id = '{$id}'
         ");
 
@@ -54,7 +80,7 @@ class Modelo
     {
         $query = new Query("
                     SELECT count(*) as total_registros
-                    FROM usuarios
+                    FROM {$this->tabla}
                 ");
 
         $registro = $query->recuperar();
@@ -63,15 +89,22 @@ class Modelo
         return $total_registros;
     }
 
-    function obtener_pagina_listado(string $pagina, string $total_paginas)
+    //Devuelve un array con los registros de la página indicada
+    function obtener_pagina_listado(string $pagina, string $total_paginas, string $orden = 'id')
     {
         $query = new Query("
             SELECT *
-            FROM usuarios
-            ORDER BY fecha_alta DESC
-            LIMIT " . $total_paginas . "
-            OFFSET " . ($pagina * $total_paginas) . "
+            FROM {$this->tabla}
+            ORDER BY {$orden}
+            LIMIT " . (int) $total_paginas . "
+            OFFSET " . ((int) $pagina * (int) $total_paginas) . "
             ;
         ");
+
+        $registros = [];
+        while ($registro = $query->recuperar())
+            $registros[] = $registro;
+
+        return $registros;
     }
 }
