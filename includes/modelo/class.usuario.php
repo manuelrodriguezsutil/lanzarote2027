@@ -33,15 +33,15 @@ class Usuario
     {
         $registro = $this->modelo->recuperar($id);
 
-        $this->nombre = $registro['nombre'];
-        $this->apellido1 = $registro['apellido1'];
-        $this->apellido2 = $registro['apellido2'];
+        $this->nombre           = $registro['nombre'];
+        $this->apellido1        = $registro['apellido1'];
+        $this->apellido2        = $registro['apellido2'];
         $this->fecha_nacimiento = $registro['fecha_nacimiento'];
-        $this->email = $registro['email'];
-        $this->fecha_alta = $registro['fecha_alta'];
-        $this->ip_alta = $registro['ip_alta'];
-        $this->fecha_modi = $registro['fecha_modi'];
-        $this->ip_modi = $registro['ip_modi'];
+        $this->email            = $registro['email'];
+        $this->fecha_alta       = $registro['fecha_alta'];
+        $this->ip_alta          = $registro['ip_alta'];
+        $this->fecha_modi       = $registro['fecha_modi'];
+        $this->ip_modi          = $registro['ip_modi'];
 
         return $registro;
     }
