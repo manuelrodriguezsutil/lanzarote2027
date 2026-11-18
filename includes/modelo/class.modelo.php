@@ -9,7 +9,6 @@ class Modelo
         $this->tabla = $tabla;
     }
 
-    //Escapa un valor para poder meterlo de forma segura dentro de una consulta
     private function escapar(?string $valor)
     {
         return BBDD::getInstancia()->getConexion()->real_escape_string($valor ?? '');
@@ -28,7 +27,6 @@ class Modelo
         return $query->recuperar();
     }
 
-    //Recibe un array campo => valor y lo inserta en la tabla. Devuelve el id del nuevo registro
     function insertar(array $registro)
     {
         $valores = [];
@@ -57,7 +55,6 @@ class Modelo
         return $query->total;
     }
 
-    //Recibe un array campo => valor (con el id incluido) y actualiza ese registro
     function modificar(array $registro)
     {
         $id = $this->escapar($registro['id']);
@@ -89,21 +86,26 @@ class Modelo
         return $total_registros;
     }
 
-    //Devuelve un array con los registros de la página indicada
     function obtener_pagina_listado(string $pagina, string $total_paginas, string $orden = 'id')
     {
+        $limite = (int) $total_paginas;
+        $offset = (int) $pagina * $limite;
+
+        $orden = $orden === 'id' ? 'id' : "{$orden}, id";
+
         $query = new Query("
             SELECT *
             FROM {$this->tabla}
-            ORDER BY {$orden}
-            LIMIT " . (int) $total_paginas . "
-            OFFSET " . ((int) $pagina * (int) $total_paginas) . "
-            ;
+            ORDER BY {$orden} ASC
+            LIMIT {$limite}
+            OFFSET {$offset};
         ");
 
         $registros = [];
-        while ($registro = $query->recuperar())
+
+        while ($registro = $query->recuperar()) {
             $registros[] = $registro;
+        }
 
         return $registros;
     }

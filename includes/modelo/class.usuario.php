@@ -4,17 +4,16 @@ class Usuario
 {
     private Modelo $modelo;
 
-    private ?string $nombre;
-    private ?string $apellido1;
-    private ?string $apellido2;
-    private ?string $fecha_nacimiento;
-    private ?string $email;
-    private ?string $fecha_alta;
-    private ?string $ip_alta;
-    private ?string $fecha_modi;
-    private ?string $ip_modi;
+    private string $nombre;
+    private string $apellido1;
+    private string $apellido2;
+    private string $fecha_nacimiento;
+    private string $email;
+    private string $fecha_alta;
+    private string $ip_alta;
+    private string $fecha_modi;
+    private string $ip_modi;
 
-    //Clase css de error de cada campo del formulario y mensaje que devuelve validar()
     private array $errores = [
         'nombre'           => '',
         'apellido1'        => '',
@@ -22,6 +21,7 @@ class Usuario
         'fecha_nacimiento' => '',
         'email'            => '',
     ];
+
     private string $mensaje = '';
 
     function __construct()
@@ -46,7 +46,6 @@ class Usuario
         return $registro;
     }
 
-    //Se queda solo con los campos de la tabla que vienen del formulario
     private function datos_formulario(array $registro)
     {
         return [
@@ -89,7 +88,6 @@ class Usuario
         return $this->modelo->modificar($datos);
     }
 
-    //Devuelve true si el registro es correcto. Deja el mensaje en $this->mensaje y los campos erróneos en $this->errores
     function validar(array $registro)
     {
         $texto_salida = '';
@@ -145,7 +143,6 @@ class Usuario
         return !$errores;
     }
 
-    //Formulario de alta, modificación y baja. $oper es alta, modi o baja; $pagina es el id del usuario
     function formulario(string $oper, string $pagina = '')
     {
         $url_form = '/usuarios/' . $oper;
@@ -185,7 +182,7 @@ class Usuario
                         break;
 
                     case 'baja':
-                        echo "Aquí tendremos que eliminar";
+                        // echo "Aquí tendremos que eliminar";
 
                         $this->eliminar($_POST['id']);
 
@@ -252,11 +249,10 @@ class Usuario
         ";
     }
 
-    //Listado paginado de usuarios
     function listado(string $pagina)
     {
         $total_registros = $this->modelo->obtener_total_registros();
-        $registros = $this->modelo->obtener_pagina_listado($pagina, TOTAL_PAGINAS_LISTADO, 'fecha_alta DESC');
+        $registros = $this->modelo->obtener_pagina_listado($pagina, TOTAL_PAGINAS_LISTADO);
 
         $salida = "
         <div class=\"container\" style=\"padding: 50px;\">
