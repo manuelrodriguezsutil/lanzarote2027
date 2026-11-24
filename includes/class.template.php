@@ -1,16 +1,13 @@
 <?php
 
-
-class Template{
-
-
-    public function __construct($templateDir='tpl')
+class Template
+{
+    public function __construct($templateDir = 'tpl')
     {
-        $this->templateDir = rtrim($templateDir,'/');
-    }    
+        $this->templateDir = rtrim($templateDir, '/');
+    }
 
-
-    public function render($file,$vars=[])
+    public function render($file, $vars = [])
     {
         $path = "{$this->templateDir}/{$file}.tpl";
 
@@ -19,34 +16,26 @@ class Template{
 
         $contenido = file_get_contents($path);
 
-        foreach($vars as $key => $valor)
+        foreach ($vars as $key => $valor)
         {
-            $contenido = preg_replace('{{\s*'.preg_quote($key,'/').'\s*}}',htmlspecialchars($valor),$contenido);          
+            $contenido = preg_replace('{{\s*'.preg_quote($key, '/').'\s*}}', htmlspecialchars($valor), $contenido);
         }
 
         return $contenido;
-
-
     }
 
-
-
-    static function header($titulo,$descripcion='')
+    static function header($titulo, $descripcion = '')
     {
         $template = new Template();
 
-        return $template->render('header',[
+        return $template->render('header', [
                     'titulo'      => $titulo
-                    ,'descripcion' => '$descripcion'
+                   ,'descripcion' => $descripcion
             ]).
-                $template->render('nav',[
-                    'usuarios'      => Idioma::lit('usuarios')
-            ])
-        
-        ;
+                $template->render('nav', [
+                    'usuarios'    => Idioma::lit('usuarios')
+            ]);
     }
-
-
 
     static function footer()
     {
@@ -54,11 +43,4 @@ class Template{
 
         return $template->render('footer');
     }
-
-
-
 }
-
-
-
-
