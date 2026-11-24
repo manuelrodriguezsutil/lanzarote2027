@@ -2,111 +2,177 @@
 
 class Modelo
 {
-    private string $tabla;
 
-    public function __construct(string $tabla)
+    function inicializar($datos)
     {
-        $this->tabla = $tabla;
+
+        $query = new Query("
+
+            SELECT COLUMN_NAME 
+            FROM   information_schema.columns
+            WHERE  table_name = '{$this->tabla}' 
+            AND    table_schema = '". BBDD::$baseDatos ."';
+
+
+        ");
+
+
+        while($registro = $query->recuperar())
+        {
+
+            $campo_nuevo = $registro['COLUMN_NAME'];
+
+            $this->$campo_nuevo = $datos[$campo_nuevo];
+    
+        }
+
     }
 
-    private function escapar(?string $valor)
+    function eliminar($id)
     {
-        return BBDD::getInstancia()->getConexion()->real_escape_string($valor ?? '');
+        $query = new Query("
+            DELETE FROM {$this->tabla} WHERE id = '{$id}';
+        ");
     }
 
-    function recuperar(string $id)
-    {
-        $id = $this->escapar($id);
 
+    function recuperar($id)
+    {
         $query = new Query("
             SELECT *
             FROM {$this->tabla}
             WHERE id = '{$id}';
         ");
 
-        return $query->recuperar();
+        $registro = $query->recuperar();
+
+        $this->inicializar($registro);
+
+        return $registro;
+
     }
 
-    function insertar(array $registro)
-    {
-        $valores = [];
-        foreach ($registro as $valor)
-            $valores[] = "'" . $this->escapar($valor) . "'";
 
-        $query = new Query("
+
+    function insertar($registro)
+    {
+        $claves_insertar = $values_insertar = '';
+
+
+        foreach($registro as $clave => $valor)
+        {
+
+            $claves_insertar .= " {$clave}, ";
+            $values_insertar .= " '{$valor}', ";    
+        }
+
+
+        $sql = "
             INSERT INTO {$this->tabla}
-            (" . implode(', ', array_keys($registro)) . ")
+            (
+                 {$claves_insertar}
+
+                 fecha_alta   
+                ,ip_alta      
+
+            )
             VALUES
-            (" . implode(', ', $valores) . ")
-        ");
+            (
+                {$values_insertar}
 
-        return $query->getLastInsertId();
-    }
 
-    function eliminar(string $id)
-    {
-        $id = $this->escapar($id);
+                 now()
+                ,'". $_SERVER['SERVER_ADDR']    ."'
+                
+            );
+        
+        ";
 
-        $query = new Query("
-            DELETE FROM {$this->tabla}
-            WHERE id = '{$id}';
-        ");
+        //echo $sql;exit;
+
+
+        $query = new Query($sql);
 
         return $query->total;
+
     }
 
-    function modificar(array $registro)
-    {
-        $id = $this->escapar($registro['id']);
-        unset($registro['id']);
 
-        $asignaciones = [];
-        foreach ($registro as $campo => $valor)
-            $asignaciones[] = "{$campo} = '" . $this->escapar($valor) . "'";
+    function modificar($registro,$id)
+    {
+        $updates = '';
+
+        foreach($registro as $clave => $valor)
+        {
+            $updates .= " {$clave} = '{$valor}', ";
+        }
+
 
         $query = new Query("
             UPDATE {$this->tabla}
-            SET " . implode(', ', $asignaciones) . "
+
+            SET {$updates}
+                ,fecha_modi         = now()
+                ,ip_modi            = '". $_SERVER['SERVER_ADDR']    ."'
+
             WHERE id = '{$id}'
+        
         ");
 
         return $query->total;
     }
 
-    function obtener_total_registros()
+
+
+    function listado($consulta=[])
     {
-        $query = new Query("
-                    SELECT count(*) as total_registros
-                    FROM {$this->tabla}
-                ");
+        $devolver = array();
 
-        $registro = $query->recuperar();
-        $total_registros = $registro['total_registros'];
+        $select = is_null($consulta['select']) ? '*': $consulta['select'];
+        $limit  = is_null($consulta['limit'])  ? ' ': "LIMIT {$consulta['limit']}";
+        $offset = is_null($consulta['offset']) ? ' ': "OFFSET {$consulta['offset']}";
 
-        return $total_registros;
-    }
+        $where = '';
 
-    function obtener_pagina_listado(string $pagina, string $total_paginas, string $orden = 'id')
-    {
-        $limite = (int) $total_paginas;
-        $offset = (int) $pagina * $limite;
-
-        $orden = $orden === 'id' ? 'id' : "{$orden}, id";
-
-        $query = new Query("
-            SELECT *
-            FROM {$this->tabla}
-            ORDER BY {$orden} ASC
-            LIMIT {$limite}
-            OFFSET {$offset};
-        ");
-
-        $registros = [];
-
-        while ($registro = $query->recuperar()) {
-            $registros[] = $registro;
+        if(!is_null($consulta['where']))
+        {
+            foreach($consulta['where'] as $clave => $valor)
+            {
+                $where .= " AND {$clave} = '{$valor}' ";
+            }
         }
 
-        return $registros;
+        $query = new Query("
+            SELECT COUNT(*) AS total_registros
+            FROM {$this->tabla}
+            WHERE 1 = 1 {$where}
+        ");
+
+        $registro = $query->recuperar();
+
+        $devolver['total_registros'] = $registro['total_registros'];
+
+
+        $query = new Query("
+            SELECT {$select}
+            FROM {$this->tabla}
+            WHERE 1 = 1 {$where}
+            {$limit}
+            {$offset}
+        ");
+        
+        $registros = array();
+        while($registro = $query->recuperar())
+        {
+            $registros[$registro['id']] = $registro;
+
+        }
+
+        $devolver['registros'] = $registros;
+        
+
+        return $devolver;
+
     }
+
 }

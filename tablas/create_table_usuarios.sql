@@ -1,25 +1,27 @@
 -- \. /var/www/html/lanzarote.lan/tablas/create_table_usuarios.sql
 
+
 DROP TABLE usuarios;
-CREATE TABLE usuarios (
-    id        int AUTO_INCREMENT PRIMARY KEY,
-    nombre    VARCHAR(255) NOT NULL,
-    apellido1 VARCHAR(255) NOT NULL,
-    apellido2 VARCHAR(255) NOT NULL,
+CREATE TABLE usuarios(
 
-    fecha_nacimiento VARCHAR(255) NOT NULL,
-    email            CHAR(255),
+    id int AUTO_INCREMENT PRIMARY KEY,
+    nombre varchar(255) not null,
+    apellido1 varchar(255) not null,
+    apellido2 varchar(255) not null,
 
-    -- DATOS AUDITORIA
+    fecha_nacimiento date not null,
+    email char(255),
 
-    usuario_alta VARCHAR(255),
-    fecha_alta   DATETIME,
-    ip_alta      CHAR(15),
+    -- DATOS AUDITORIA  --
 
-    usuario_modi VARCHAR(255),
-    fecha_modi   DATETIME,
-    ip_modi      CHAR(15)
+    usuario_alta  varchar(255),
+    fecha_alta    DATETIME,
+    ip_alta       CHAR(15),
+    usuario_modi  varchar(255),
+    fecha_modi    DATETIME,
+    ip_modi       CHAR(15)
 );
+
 
 INSERT INTO usuarios(nombre, apellido1, apellido2, fecha_nacimiento, email) VALUES
 ('Juanra', 'Curbelo', 'Arrocha', '1995-04-12', 'juan.curbelo@cifpzonzamas.es'),
@@ -43,20 +45,3 @@ INSERT INTO usuarios(nombre, apellido1, apellido2, fecha_nacimiento, email) VALU
 ('Claudia', 'Castro', 'Gil', '2001-09-22', 'claudia.castro@gmail.com'),
 ('Álvaro', 'Ortega', 'Serrano', '1996-12-15', 'alvaro.ortega@gmail.com'),
 ('Isabel', 'Ramos', 'Molina', '1999-08-31', 'isabel.ramos@gmail.com');
-
-INSERT INTO usuarios(nombre, apellido1, apellido2, fecha_nacimiento, email) VALUES
-('Raúl', 'Herrera', 'Domínguez', '1994-03-18', 'raul.herrera@gmail.com'),
-('Natalia', 'Medina', 'Suárez', '1999-07-12', 'natalia.medina@gmail.com'),
-('Hugo', 'Cabrera', 'Reyes', '2001-11-25', 'hugo.cabrera@gmail.com'),
-('Marta', 'Santos', 'Vega', '1996-05-09', 'marta.santos@gmail.com'),
-('Iván', 'León', 'Aguilar', '1993-08-14', 'ivan.leon@gmail.com'),
-('Patricia', 'Campos', 'Herrera', '2000-02-28', 'patricia.campos@gmail.com'),
-('Rubén', 'Flores', 'Méndez', '1997-12-06', 'ruben.flores@gmail.com'),
-('Beatriz', 'Vargas', 'Cruz', '1995-09-21', 'beatriz.vargas@gmail.com'),
-('Óscar', 'Prieto', 'Núñez', '1992-04-17', 'oscar.prieto@gmail.com'),
-('Cristina', 'Molina', 'Rojas', '1998-06-30', 'cristina.molina@gmail.com'),
-('Jorge', 'Iglesias', 'Peña', '2002-01-11', 'jorge.iglesias@gmail.com'),
-('Sara', 'Delgado', 'Fuentes', '1999-10-04', 'sara.delgado@gmail.com'),
-('Fernando', 'Acosta', 'Paredes', '1991-03-23', 'fernando.acosta@gmail.com'),
-('Noelia', 'Ríos', 'Salazar', '2001-08-19', 'noelia.rios@gmail.com'),
-('Víctor', 'Benítez', 'Soler', '1996-12-07', 'victor.benitez@gmail.com');

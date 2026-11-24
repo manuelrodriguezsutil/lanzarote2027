@@ -1,0 +1,17 @@
+usuarios:Benutzer
+eliminacion:Löschung
+modificacion:Änderung
+alta:Registrierung
+error_caracteres:%s muss mindestens %s Zeichen enthalten
+error_formato_invalido:%s hat kein gültiges Format
+operacion_exito:Vorgang erfolgreich abgeschlossen
+introduce_tu:Gib dein %s ein
+email_generico:name@domain.de
+nombre:Vorname
+apellido1:Erster Nachname
+apellido2:Zweiter Nachname
+fecha_nacimiento:Geburtsdatum
+email:E-Mail
+alta_usuario:Benutzerregistrierung
+anterior:Zurück
+siguiente:Weiter
