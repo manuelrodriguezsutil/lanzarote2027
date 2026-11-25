@@ -12,8 +12,7 @@ class Query
 
         $this->resultado = $this->conexion->query($sql);
 
-        if ($this->resultado === false)
-        {
+        if ($this->resultado === false) {
             throw new Exception("Error en la consulta" . $this->conexion->error);
         }
 
@@ -30,15 +29,13 @@ class Query
 
     public function recuperar()
     {
-        if (!$this->resultado instanceof mysqli_result)
-        {
+        if (!$this->resultado instanceof mysqli_result) {
             return null;
         }
 
         $registro = $this->resultado->fetch_assoc();
 
-        if ($registro == null)
-        {
+        if ($registro == null) {
             $this->resultado->free();
             $this->resultado = null;
         }

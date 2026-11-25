@@ -31,6 +31,7 @@
       </div>
       <div class="idiomas">
         <a href="http://en.lanzarote.lan/"><img src="/img/flags/en.svg" alt="English" /></a>
+        <a href="http://de.lanzarote.lan/"><img src="/img/flags/de.svg" alt="Deutsch"/></a>
         <a href="http://www.lanzarote.lan/"><img src="/img/flags/es.svg" alt="Español" /></a>
       </div>
     </div>

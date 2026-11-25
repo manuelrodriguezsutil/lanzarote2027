@@ -2,31 +2,32 @@
 
 class Modelo
 {
-    function inicializar($datos)
+    public string $tabla;
+
+    function inicializar(array $datos)
     {
         $query = new Query("
             SELECT COLUMN_NAME
             FROM   information_schema.columns
             WHERE  table_name = '{$this->tabla}'
-            AND    table_schema = '". BBDD::$baseDatos ."';
+            AND    table_schema = '" . BBDD::$baseDatos . "';
         ");
 
-        while ($registro = $query->recuperar())
-        {
+        while ($registro = $query->recuperar()) {
             $campo_nuevo = $registro['COLUMN_NAME'];
 
             $this->$campo_nuevo = $datos[$campo_nuevo];
         }
     }
 
-    function eliminar($id)
+    function eliminar(string $id)
     {
         $query = new Query("
             DELETE FROM {$this->tabla} WHERE id = '{$id}';
         ");
     }
 
-    function recuperar($id)
+    function recuperar(string $id)
     {
         $query = new Query("
             SELECT *
@@ -41,12 +42,11 @@ class Modelo
         return $registro;
     }
 
-    function insertar($registro)
+    function insertar(array $registro)
     {
         $claves_insertar = $values_insertar = '';
 
-        foreach ($registro as $clave => $valor)
-        {
+        foreach ($registro as $clave => $valor) {
             $claves_insertar .= " {$clave}, ";
             $values_insertar .= " '{$valor}', ";
         }
@@ -64,7 +64,7 @@ class Modelo
                 {$values_insertar}
 
                  now()
-                ,'". $_SERVER['SERVER_ADDR'] ."'
+                ,'" . $_SERVER['SERVER_ADDR'] . "'
             );
         ";
 
@@ -73,12 +73,11 @@ class Modelo
         return $query->total;
     }
 
-    function modificar($registro, $id)
+    function modificar(array $registro, string $id)
     {
         $updates = '';
 
-        foreach ($registro as $clave => $valor)
-        {
+        foreach ($registro as $clave => $valor) {
             $updates .= " {$clave} = '{$valor}', ";
         }
 
@@ -87,7 +86,7 @@ class Modelo
 
             SET {$updates}
                  fecha_modi         = now()
-                ,ip_modi            = '". $_SERVER['SERVER_ADDR'] ."'
+                ,ip_modi            = '" . $_SERVER['SERVER_ADDR'] . "'
 
             WHERE id = '{$id}'
         ");
@@ -105,10 +104,8 @@ class Modelo
 
         $where = '';
 
-        if (!is_null($consulta['where']))
-        {
-            foreach ($consulta['where'] as $clave => $valor)
-            {
+        if (!is_null($consulta['where'])) {
+            foreach ($consulta['where'] as $clave => $valor) {
                 $where .= " AND {$clave} = '{$valor}' ";
             }
         }
@@ -133,8 +130,7 @@ class Modelo
 
         $registros = array();
 
-        while ($registro = $query->recuperar())
-        {
+        while ($registro = $query->recuperar()) {
             $registros[$registro['id']] = $registro;
         }
 

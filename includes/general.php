@@ -6,24 +6,23 @@ define('TOTAL_PAGINAS_LISTADO', 10);
 
 spl_autoload_register(function ($class_name) {
 
-    switch ($class_name)
-    {
+    switch ($class_name) {
         case 'BBDD':
         case 'Query':
             $subdirectorio = 'bbdd/';
-        break;
+            break;
 
         case 'Template':
         case 'Idioma':
             $subdirectorio = '';
-        break;
+            break;
 
         default:
             $subdirectorio = 'modelo/';
-        break;
+            break;
     }
 
-    require_once "includes/{$subdirectorio}class.". strtolower($class_name) .'.php';
+    require_once "includes/{$subdirectorio}class." . strtolower($class_name) . '.php';
 });
 
 //Lee una fecha de BBDD (formato AAAAMMDD), y la devuelve en formato DD/MM/AAA donde la / es personalizable
@@ -31,7 +30,7 @@ function formato_DDMMAAAA($fecha_AAAAMMDD, $sep = '/')
 {
     $fecha_AAAAMMDD = str_replace('-', '', $fecha_AAAAMMDD);
 
-    return substr($fecha_AAAAMMDD, 6). $sep . substr($fecha_AAAAMMDD, 4, 2) . $sep . substr($fecha_AAAAMMDD, 0, 4);
+    return substr($fecha_AAAAMMDD, 6) . $sep . substr($fecha_AAAAMMDD, 4, 2) . $sep . substr($fecha_AAAAMMDD, 0, 4);
 }
 
 function fecha_valida($fecha)

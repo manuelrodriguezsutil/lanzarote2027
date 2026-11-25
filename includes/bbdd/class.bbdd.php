@@ -14,14 +14,13 @@ class BBDD
     private function __construct()
     {
         $this->conexion = new mysqli(
-             $this->host
-            ,$this->usuario
-            ,$this->password
-            ,self::$baseDatos
+            $this->host,
+            $this->usuario,
+            $this->password,
+            self::$baseDatos
         );
 
-        if ($this->conexion->connect_error)
-        {
+        if ($this->conexion->connect_error) {
             die("Error de conexión: " . $this->conexion->connect_error);
         }
 
@@ -30,8 +29,7 @@ class BBDD
 
     public static function getInstancia(): BBDD
     {
-        if (self::$instancia == null)
-        {
+        if (self::$instancia == null) {
             self::$instancia = new BBDD();
         }
 

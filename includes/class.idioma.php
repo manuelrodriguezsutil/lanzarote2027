@@ -13,12 +13,10 @@ class Idioma
         if ($idioma == 'www' || $idioma == 'lanzarote')
             $idioma = 'es';
 
-        $decriptor = fopen($_SERVER['DOCUMENT_ROOT'].'/lang/'. $idioma .'.txt', 'r');
+        $decriptor = fopen($_SERVER['DOCUMENT_ROOT'] . '/lang/' . $idioma . '.txt', 'r');
 
-        if ($decriptor)
-        {
-            while ($linea = fgets($decriptor))
-            {
+        if ($decriptor) {
+            while ($linea = fgets($decriptor)) {
                 $linea = trim($linea);
 
                 $partes_linea = explode(':', $linea);
@@ -30,8 +28,7 @@ class Idioma
 
     public static function getInstancia(): Idioma
     {
-        if (self::$instancia == null)
-        {
+        if (self::$instancia == null) {
             self::$instancia = new Idioma();
         }
 

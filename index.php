@@ -6,15 +6,13 @@ echo Template::header('Lanzarote');
 
 $usuario = new Usuario();
 
-switch ($_GET['seccion'])
-{
+switch ($_GET['seccion']) {
     case 'usuarios':
         //Cargamos la sección usuarios
 
-        $url_form = '/usuarios/'.$_GET['oper'];
+        $url_form = '/usuarios/' . $_GET['oper'];
 
-        switch ($_GET['oper'])
-        {
+        switch ($_GET['oper']) {
             case 'baja':
 
                 $operacion = Idioma::lit('eliminacion');
@@ -27,7 +25,7 @@ switch ($_GET['seccion'])
 
                 $id = $_GET['pagina'];
 
-                $url_form .= '/'.$id;
+                $url_form .= '/' . $id;
 
             case 'alta':
 
@@ -35,68 +33,59 @@ switch ($_GET['seccion'])
 
                 define("OPERACION", $operacion);
 
-                $boton_alta = "<input type=\"submit\" class=\"theme-primary btn-solid btn-styled\" value=\"". OPERACION ." de usuario\" />";
+                $boton_alta = "<input type=\"submit\" class=\"theme-primary btn-solid btn-styled\" value=\"" . OPERACION . " de usuario\" />";
 
                 $errores = false;
                 $disabled = $_GET['oper'] == 'baja' ? " readonly=\"readonly\" " : '';
 
-                if ($_POST['paso'] == '1')
-                {
+                if ($_POST['paso'] == '1') {
                     $_texto_errores = '';
 
-                    if (strlen($_POST['nombre']) < 3)
-                    {
+                    if (strlen($_POST['nombre']) < 3) {
                         $_error_nombre = 'error';
-                        $_texto_errores = '<p>- '. sprintf(Idioma::lit('error_caracteres'), 'nombre', '3') .'.</p>';
+                        $_texto_errores = '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'nombre', '3') . '.</p>';
 
                         $errores = true;
                     }
 
-                    if (strlen($_POST['apellido1']) < 3)
-                    {
+                    if (strlen($_POST['apellido1']) < 3) {
                         $_error_apellido1 = 'error';
-                        $_texto_errores .= '<p>- '. sprintf(Idioma::lit('error_caracteres'), 'Primer Apellido', '3') .'.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'Primer Apellido', '3') . '.</p>';
 
                         $errores = true;
                     }
 
-                    if (strlen($_POST['apellido2']) < 3)
-                    {
+                    if (strlen($_POST['apellido2']) < 3) {
                         $_error_apellido2 = 'error';
-                        $_texto_errores .= '<p>- '. sprintf(Idioma::lit('error_caracteres'), 'Segundo Apellido', '3') .'.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'Segundo Apellido', '3') . '.</p>';
 
                         $errores = true;
                     }
 
-                    if (!fecha_valida($_POST['fecha_nacimiento']))
-                    {
+                    if (!fecha_valida($_POST['fecha_nacimiento'])) {
                         $_error_fecha_nacimiento = 'error';
-                        $_texto_errores .= '<p>- '. sprintf(Idioma::lit('error_formato_invalido'), 'Fecha Nacimiento') .'.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_formato_invalido'), 'Fecha Nacimiento') . '.</p>';
 
                         $errores = true;
                     }
 
-                    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL))
-                    {
+                    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                         $_error_email = 'error';
-                        $_texto_errores .= '<p>- '. sprintf(Idioma::lit('error_formato_invalido'), 'E-mail') .'.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_formato_invalido'), 'E-mail') . '.</p>';
 
                         $errores = true;
                     }
 
-                    if ($errores)
-                    {
+                    if ($errores) {
                         $mensajes_errores = "
                             <div class=\"info_errores mb-5 mt-5\" role=\"alert\">
                                 {$_texto_errores}
                             </div>
                         ";
-                    }
-                    else
-                    {
+                    } else {
                         $mensaje_exito = "
                             <div class=\"alert theme-success  mb-5 mt-5\" role=\"alert\">
-                                <p>". Idioma::lit('operacion_exito') ."</p>
+                                <p>" . Idioma::lit('operacion_exito') . "</p>
                             </div>
                         ";
 
@@ -104,8 +93,7 @@ switch ($_GET['seccion'])
 
                         $disabled = " disabled=\"disabled\" ";
 
-                        switch ($_GET['oper'])
-                        {
+                        switch ($_GET['oper']) {
                             case 'alta':
 
                                 $datos_insertar = array();
@@ -117,7 +105,7 @@ switch ($_GET['seccion'])
 
                                 $usuario->insertar($datos_insertar);
 
-                            break;
+                                break;
 
                             case 'modi':
 
@@ -130,7 +118,7 @@ switch ($_GET['seccion'])
 
                                 $usuario->modificar($datos_modificar, $id);
 
-                            break;
+                                break;
 
                             case 'baja':
 
@@ -140,18 +128,16 @@ switch ($_GET['seccion'])
                                 header("Location: /usuarios/listado/0");
                                 exit;
 
-                            break;
+                                break;
                         }
                     }
-                }
-                elseif (!empty($id))
-                {
+                } elseif (!empty($id)) {
                     $_POST = $usuario->recuperar($id);
                 }
 
                 echo "
                     <a href=\"/usuarios/listado/0\" class=\"btn-solid theme-info mb-5\">Volver <i class=\"bi bi-arrow-return-left\"></i></a>
-                    <h1>". OPERACION ." de usuarios</h1>
+                    <h1>" . OPERACION . " de usuarios</h1>
                     {$mensajes_errores}
                     {$mensaje_exito}
                     <form action=\"{$url_form}\" method=\"POST\">
@@ -161,28 +147,28 @@ switch ($_GET['seccion'])
                         <input type=\"hidden\" name=\"id\" value=\"{$_POST['id']}\" />
 
                         <div class=\"form-field mb-4 {$_error_nombre}\">
-                            <label for=\"nombreID\" class=\"form-label\">". Idioma::lit('nombre') ."</label>
-                            <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$_POST['nombre']}\" placeholder=\"". sprintf(Idioma::lit('introduce_tu'), 'nombre') ."\">
+                            <label for=\"nombreID\" class=\"form-label\">" . Idioma::lit('nombre') . "</label>
+                            <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$_POST['nombre']}\" placeholder=\"" . sprintf(Idioma::lit('introduce_tu'), 'nombre') . "\">
                         </div>
 
                         <div class=\"form-field mb-4 {$_error_apellido1}\">
-                            <label for=\"apellido1ID\" class=\"form-label\">". Idioma::lit('apellido1') ."</label>
-                            <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$_POST['apellido1']}\" placeholder=\"". sprintf(Idioma::lit('introduce_tu'), 'Primer Apellido') ."\">
+                            <label for=\"apellido1ID\" class=\"form-label\">" . Idioma::lit('apellido1') . "</label>
+                            <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$_POST['apellido1']}\" placeholder=\"" . sprintf(Idioma::lit('introduce_tu'), 'Primer Apellido') . "\">
                         </div>
 
                         <div class=\"form-field mb-4 {$_error_apellido2}\">
-                            <label for=\"apellido2ID\" class=\"form-label\">". Idioma::lit('apellido2') ."</label>
-                            <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$_POST['apellido2']}\" placeholder=\"". sprintf(Idioma::lit('introduce_tu'), 'Segundo apellido') ."\">
+                            <label for=\"apellido2ID\" class=\"form-label\">" . Idioma::lit('apellido2') . "</label>
+                            <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$_POST['apellido2']}\" placeholder=\"" . sprintf(Idioma::lit('introduce_tu'), 'Segundo apellido') . "\">
                         </div>
 
                         <div class=\"form-field mb-4 {$_error_fecha_nacimiento}\">
-                            <label for=\"fecha_nacimientoID\" class=\"form-label\">". Idioma::lit('fecha_nacimiento') ."</label>
+                            <label for=\"fecha_nacimientoID\" class=\"form-label\">" . Idioma::lit('fecha_nacimiento') . "</label>
                             <input {$disabled} type=\"date\" name=\"fecha_nacimiento\" class=\"form-control\" id=\"fecha_nacimientoID\" value=\"{$_POST['fecha_nacimiento']}\" >
                         </div>
 
                         <div class=\"form-field mb-4 {$_error_email}\">
-                            <label for=\"emailID\" class=\"form-label\">". Idioma::lit('email') ."</label>
-                            <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$_POST['email']}\" placeholder=\"". Idioma::lit('email_generico') ."\">
+                            <label for=\"emailID\" class=\"form-label\">" . Idioma::lit('email') . "</label>
+                            <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$_POST['email']}\" placeholder=\"" . Idioma::lit('email_generico') . "\">
                         </div>
 
                         {$boton_alta}
@@ -190,13 +176,13 @@ switch ($_GET['seccion'])
                     </form>
                 ";
 
-            break;
+                break;
 
             default:
 
                 $datos_usuarios = $usuario->listado([
-                    'limit'  => TOTAL_PAGINAS_LISTADO
-                   ,'offset' => $_GET['pagina'] * TOTAL_PAGINAS_LISTADO
+                    'limit'  => TOTAL_PAGINAS_LISTADO,
+                    'offset' => $_GET['pagina'] * TOTAL_PAGINAS_LISTADO
                 ]);
 
                 $registros       = $datos_usuarios['registros'];
@@ -204,7 +190,7 @@ switch ($_GET['seccion'])
 
                 echo "
                     <a href=\"/usuarios/alta\" class=\"theme-primary btn-solid btn-styled\">
-                        ". Idioma::lit('alta_usuario') ." <i class=\"bi bi-plus-lg\"></i>
+                        " . Idioma::lit('alta_usuario') . " <i class=\"bi bi-plus-lg\"></i>
                     </a>
 
                     <table style=\"margin-top:15px\" class=\"table\">
@@ -212,48 +198,45 @@ switch ($_GET['seccion'])
                             <tr>
                                 <th scope=\"col\">#</th>
                                 <th scope=\"col\">ID</th>
-                                <th scope=\"col\">". Idioma::lit('nombre') ."</th>
-                                <th scope=\"col\">". Idioma::lit('apellido1') ."</th>
-                                <th scope=\"col\">". Idioma::lit('apellido2') ."</th>
-                                <th scope=\"col\">". Idioma::lit('fecha_nacimiento') ."</th>
-                                <th scope=\"col\">". Idioma::lit('email') ."</th>
+                                <th scope=\"col\">" . Idioma::lit('nombre') . "</th>
+                                <th scope=\"col\">" . Idioma::lit('apellido1') . "</th>
+                                <th scope=\"col\">" . Idioma::lit('apellido2') . "</th>
+                                <th scope=\"col\">" . Idioma::lit('fecha_nacimiento') . "</th>
+                                <th scope=\"col\">" . Idioma::lit('email') . "</th>
                             </tr>
                         </thead>
                         <tbody>
                 ";
 
-                foreach ($registros as $id => $registro)
-                {
+                foreach ($registros as $id => $registro) {
                     $modificacion = "<a class=\"btn-solid theme-primary\" href=\"/usuarios/modi/{$registro['id']}\"><i class=\"bi bi-pencil-square\"></i></a>";
                     $baja         = "<a class=\"btn-solid theme-danger\" href=\"/usuarios/baja/{$registro['id']}\"><i class=\"bi bi-trash\"></i></a>";
 
                     echo "
                         <tr>
                             <td>{$modificacion} {$baja}</td>
-                            <td>".$registro['id']."</td>
-                            <td>".$registro['nombre']."</td>
-                            <td>".$registro['apellido1']."</td>
-                            <td>".$registro['apellido2']."</td>
-                            <td>".formato_DDMMAAAA($registro['fecha_nacimiento'])."</td>
-                            <td>".$registro['email']."</td>
+                            <td>" . $registro['id'] . "</td>
+                            <td>" . $registro['nombre'] . "</td>
+                            <td>" . $registro['apellido1'] . "</td>
+                            <td>" . $registro['apellido2'] . "</td>
+                            <td>" . formato_DDMMAAAA($registro['fecha_nacimiento']) . "</td>
+                            <td>" . $registro['email'] . "</td>
                         </tr>
                     ";
                 }
 
                 $url_anterior = '';
 
-                if ($_GET['pagina'] != "0")
-                {
+                if ($_GET['pagina'] != "0") {
                     $pagina_anterior = $_GET['pagina'] - 1;
-                    $url_anterior = "<li class=\"page-item\"><a class=\"page-link\" href=\"/usuarios/listado/{$pagina_anterior}\">".Idioma::lit('anterior')."</a></li>";
+                    $url_anterior = "<li class=\"page-item\"><a class=\"page-link\" href=\"/usuarios/listado/{$pagina_anterior}\">" . Idioma::lit('anterior') . "</a></li>";
                 }
 
                 $url_siguiente = '';
 
-                if ($total_registros > (($_GET['pagina'] + 1) * TOTAL_PAGINAS_LISTADO))
-                {
+                if ($total_registros > (($_GET['pagina'] + 1) * TOTAL_PAGINAS_LISTADO)) {
                     $pagina_siguiente = $_GET['pagina'] + 1;
-                    $url_siguiente = "<li class=\"page-item\"><a class=\"page-link\" href=\"/usuarios/listado/{$pagina_siguiente}\">".Idioma::lit('siguiente')."</a></li>";
+                    $url_siguiente = "<li class=\"page-item\"><a class=\"page-link\" href=\"/usuarios/listado/{$pagina_siguiente}\">" . Idioma::lit('siguiente') . "</a></li>";
                 }
 
                 echo "
@@ -267,10 +250,10 @@ switch ($_GET['seccion'])
                     </nav>
                 ";
 
-            break;
+                break;
         }
 
-    break;
+        break;
 
     default:
 
@@ -303,7 +286,7 @@ switch ($_GET['seccion'])
             </div>
         ";
 
-    break;
+        break;
 }
 
 echo Template::footer();

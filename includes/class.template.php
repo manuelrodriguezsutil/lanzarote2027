@@ -2,12 +2,14 @@
 
 class Template
 {
+    public string $templateDir;
+
     public function __construct($templateDir = 'tpl')
     {
         $this->templateDir = rtrim($templateDir, '/');
     }
 
-    public function render($file, $vars = [])
+    public function render(string $file, $vars = [])
     {
         $path = "{$this->templateDir}/{$file}.tpl";
 
@@ -16,24 +18,23 @@ class Template
 
         $contenido = file_get_contents($path);
 
-        foreach ($vars as $key => $valor)
-        {
-            $contenido = preg_replace('{{\s*'.preg_quote($key, '/').'\s*}}', htmlspecialchars($valor), $contenido);
+        foreach ($vars as $key => $valor) {
+            $contenido = preg_replace('{{\s*' . preg_quote($key, '/') . '\s*}}', htmlspecialchars($valor), $contenido);
         }
 
         return $contenido;
     }
 
-    static function header($titulo, $descripcion = '')
+    static function header(string $titulo, $descripcion = '')
     {
         $template = new Template();
 
         return $template->render('header', [
-                    'titulo'      => $titulo
-                   ,'descripcion' => $descripcion
-            ]).
-                $template->render('nav', [
-                    'usuarios'    => Idioma::lit('usuarios')
+            'titulo'      => $titulo,
+            'descripcion' => $descripcion
+        ]) .
+            $template->render('nav', [
+                'usuarios'    => Idioma::lit('usuarios')
             ]);
     }
 
