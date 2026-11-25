@@ -3,6 +3,7 @@
 class Modelo
 {
     public string $tabla;
+    private array $claves;
 
     function inicializar(array $datos)
     {
@@ -15,8 +16,8 @@ class Modelo
 
         while ($registro = $query->recuperar()) {
             $campo_nuevo = $registro['COLUMN_NAME'];
-
             $this->$campo_nuevo = $datos[$campo_nuevo];
+            $this->claves[$campo_nuevo] = $datos[$campo_nuevo];
         }
     }
 
@@ -40,6 +41,14 @@ class Modelo
         $this->inicializar($registro);
 
         return $registro;
+    }
+
+    function sincronizar_con_campo(string $id)
+    {
+        $this->recuperar($id);
+
+        foreach ($this->claves as $clave => $valor)
+            Campo::val($clave, $valor);
     }
 
     function insertar(array $registro)

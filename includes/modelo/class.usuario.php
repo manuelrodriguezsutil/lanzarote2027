@@ -2,7 +2,7 @@
 
 class Usuario extends Modelo
 {
-    public $tabla;
+    public string $tabla;
 
     function __construct()
     {

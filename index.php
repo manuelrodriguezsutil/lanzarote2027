@@ -6,24 +6,24 @@ echo Template::header('Lanzarote');
 
 $usuario = new Usuario();
 
-switch ($_GET['seccion']) {
+switch (Campo::val('seccion')) {
     case 'usuarios':
         //Cargamos la sección usuarios
 
-        $url_form = '/usuarios/' . $_GET['oper'];
+        $url_form = '/usuarios/' . Campo::val('oper');
 
-        switch ($_GET['oper']) {
+        switch (Campo::val('oper')) {
             case 'baja':
 
                 $operacion = Idioma::lit('eliminacion');
 
-                $id = $_GET['pagina'];
+                $id = Campo::val('pagina');
 
             case 'modi':
 
                 $operacion = empty($operacion) ? Idioma::lit('modificacion') : $operacion;
 
-                $id = $_GET['pagina'];
+                $id = Campo::val('pagina');
 
                 $url_form .= '/' . $id;
 
@@ -36,40 +36,40 @@ switch ($_GET['seccion']) {
                 $boton_alta = "<input type=\"submit\" class=\"theme-primary btn-solid btn-styled\" value=\"" . OPERACION . " de usuario\" />";
 
                 $errores = false;
-                $disabled = $_GET['oper'] == 'baja' ? " readonly=\"readonly\" " : '';
+                $disabled = Campo::val('oper') == 'baja' ? " readonly=\"readonly\" " : '';
 
-                if ($_POST['paso'] == '1') {
+                if (Campo::val('paso') == '1') {
                     $_texto_errores = '';
 
-                    if (strlen($_POST['nombre']) < 3) {
+                    if (strlen(Campo::val('nombre')) < 3) {
                         $_error_nombre = 'error';
                         $_texto_errores = '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'nombre', '3') . '.</p>';
 
                         $errores = true;
                     }
 
-                    if (strlen($_POST['apellido1']) < 3) {
+                    if (strlen(Campo::val('apellido1')) < 3) {
                         $_error_apellido1 = 'error';
                         $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'Primer Apellido', '3') . '.</p>';
 
                         $errores = true;
                     }
 
-                    if (strlen($_POST['apellido2']) < 3) {
+                    if (strlen(Campo::val('apellido2')) < 3) {
                         $_error_apellido2 = 'error';
                         $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'Segundo Apellido', '3') . '.</p>';
 
                         $errores = true;
                     }
 
-                    if (!fecha_valida($_POST['fecha_nacimiento'])) {
+                    if (!fecha_valida(Campo::val('fecha_nacimiento'))) {
                         $_error_fecha_nacimiento = 'error';
                         $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_formato_invalido'), 'Fecha Nacimiento') . '.</p>';
 
                         $errores = true;
                     }
 
-                    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                    if (!filter_var(Campo::val('email'), FILTER_VALIDATE_EMAIL)) {
                         $_error_email = 'error';
                         $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_formato_invalido'), 'E-mail') . '.</p>';
 
@@ -93,15 +93,15 @@ switch ($_GET['seccion']) {
 
                         $disabled = " disabled=\"disabled\" ";
 
-                        switch ($_GET['oper']) {
+                        switch (Campo::val('oper')) {
                             case 'alta':
 
                                 $datos_insertar = array();
-                                $datos_insertar['nombre']           = $_POST['nombre'];
-                                $datos_insertar['apellido1']        = $_POST['apellido1'];
-                                $datos_insertar['apellido2']        = $_POST['apellido2'];
-                                $datos_insertar['fecha_nacimiento'] = $_POST['fecha_nacimiento'];
-                                $datos_insertar['email']            = $_POST['email'];
+                                $datos_insertar['nombre']           = Campo::val('nombre');
+                                $datos_insertar['apellido1']        = Campo::val('apellido1');
+                                $datos_insertar['apellido2']        = Campo::val('apellido2');
+                                $datos_insertar['fecha_nacimiento'] = Campo::val('fecha_nacimiento');
+                                $datos_insertar['email']            = Campo::val('email');
 
                                 $usuario->insertar($datos_insertar);
 
@@ -110,11 +110,11 @@ switch ($_GET['seccion']) {
                             case 'modi':
 
                                 $datos_modificar = array();
-                                $datos_modificar['nombre']           = $_POST['nombre'];
-                                $datos_modificar['apellido1']        = $_POST['apellido1'];
-                                $datos_modificar['apellido2']        = $_POST['apellido2'];
-                                $datos_modificar['fecha_nacimiento'] = $_POST['fecha_nacimiento'];
-                                $datos_modificar['email']            = $_POST['email'];
+                                $datos_modificar['nombre']           = Campo::val('nombre');
+                                $datos_modificar['apellido1']        = Campo::val('apellido1');
+                                $datos_modificar['apellido2']        = Campo::val('apellido2');
+                                $datos_modificar['fecha_nacimiento'] = Campo::val('fecha_nacimiento');
+                                $datos_modificar['email']            = Campo::val('email');
 
                                 $usuario->modificar($datos_modificar, $id);
 
@@ -122,7 +122,7 @@ switch ($_GET['seccion']) {
 
                             case 'baja':
 
-                                $usuario->eliminar($_POST['id']);
+                                $usuario->eliminar(Campo::val('id'));
 
                                 ob_clean();
                                 header("Location: /usuarios/listado/0");
@@ -132,7 +132,7 @@ switch ($_GET['seccion']) {
                         }
                     }
                 } elseif (!empty($id)) {
-                    $_POST = $usuario->recuperar($id);
+                    $usuario->sincronizar_con_campo($id);
                 }
 
                 echo "
@@ -144,31 +144,31 @@ switch ($_GET['seccion']) {
 
                         <input type=\"hidden\" name=\"paso\" value=\"1\" />
 
-                        <input type=\"hidden\" name=\"id\" value=\"{$_POST['id']}\" />
+                        <input type=\"hidden\" name=\"id\" value=\"{Campo::val('id')}\" />
 
                         <div class=\"form-field mb-4 {$_error_nombre}\">
                             <label for=\"nombreID\" class=\"form-label\">" . Idioma::lit('nombre') . "</label>
-                            <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$_POST['nombre']}\" placeholder=\"" . sprintf(Idioma::lit('introduce_tu'), 'nombre') . "\">
+                            <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"" . Campo::val('nombre') . "\" placeholder=\"" . sprintf(Idioma::lit('introduce_tu'), 'nombre') . "\">
                         </div>
 
                         <div class=\"form-field mb-4 {$_error_apellido1}\">
                             <label for=\"apellido1ID\" class=\"form-label\">" . Idioma::lit('apellido1') . "</label>
-                            <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$_POST['apellido1']}\" placeholder=\"" . sprintf(Idioma::lit('introduce_tu'), 'Primer Apellido') . "\">
+                            <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"" . Campo::val('apellido1') . "\" placeholder=\"" . sprintf(Idioma::lit('introduce_tu'), 'Primer Apellido') . "\">
                         </div>
 
                         <div class=\"form-field mb-4 {$_error_apellido2}\">
                             <label for=\"apellido2ID\" class=\"form-label\">" . Idioma::lit('apellido2') . "</label>
-                            <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$_POST['apellido2']}\" placeholder=\"" . sprintf(Idioma::lit('introduce_tu'), 'Segundo apellido') . "\">
+                            <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"" . Campo::val('apellido2') . "\" value=\"{Campo::val('nombre')}\" placeholder=\"" . sprintf(Idioma::lit('introduce_tu'), 'Segundo apellido') . "\">
                         </div>
 
                         <div class=\"form-field mb-4 {$_error_fecha_nacimiento}\">
                             <label for=\"fecha_nacimientoID\" class=\"form-label\">" . Idioma::lit('fecha_nacimiento') . "</label>
-                            <input {$disabled} type=\"date\" name=\"fecha_nacimiento\" class=\"form-control\" id=\"fecha_nacimientoID\" value=\"{$_POST['fecha_nacimiento']}\" >
+                            <input {$disabled} type=\"date\" name=\"fecha_nacimiento\" class=\"form-control\" id=\"fecha_nacimientoID\" value=\"" . Campo::val('fecha_nacimiento') . "\" >
                         </div>
 
                         <div class=\"form-field mb-4 {$_error_email}\">
                             <label for=\"emailID\" class=\"form-label\">" . Idioma::lit('email') . "</label>
-                            <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$_POST['email']}\" placeholder=\"" . Idioma::lit('email_generico') . "\">
+                            <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"" . Campo::val('email') . "\" placeholder=\"" . Idioma::lit('email_generico') . "\">
                         </div>
 
                         {$boton_alta}
@@ -182,7 +182,7 @@ switch ($_GET['seccion']) {
 
                 $datos_usuarios = $usuario->listado([
                     'limit'  => TOTAL_PAGINAS_LISTADO,
-                    'offset' => $_GET['pagina'] * TOTAL_PAGINAS_LISTADO
+                    'offset' => Campo::val('pagina') * TOTAL_PAGINAS_LISTADO
                 ]);
 
                 $registros       = $datos_usuarios['registros'];
@@ -227,15 +227,15 @@ switch ($_GET['seccion']) {
 
                 $url_anterior = '';
 
-                if ($_GET['pagina'] != "0") {
-                    $pagina_anterior = $_GET['pagina'] - 1;
+                if (Campo::val('pagina') != "0") {
+                    $pagina_anterior = Campo::val('pagina') - 1;
                     $url_anterior = "<li class=\"page-item\"><a class=\"page-link\" href=\"/usuarios/listado/{$pagina_anterior}\">" . Idioma::lit('anterior') . "</a></li>";
                 }
 
                 $url_siguiente = '';
 
-                if ($total_registros > (($_GET['pagina'] + 1) * TOTAL_PAGINAS_LISTADO)) {
-                    $pagina_siguiente = $_GET['pagina'] + 1;
+                if ($total_registros > ((Campo::val('pagina') + 1) * TOTAL_PAGINAS_LISTADO)) {
+                    $pagina_siguiente = Campo::val('pagina') + 1;
                     $url_siguiente = "<li class=\"page-item\"><a class=\"page-link\" href=\"/usuarios/listado/{$pagina_siguiente}\">" . Idioma::lit('siguiente') . "</a></li>";
                 }
 
